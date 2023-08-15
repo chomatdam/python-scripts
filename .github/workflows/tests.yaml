@@ -1,0 +1,39 @@
+name: Post to Slack Channel (Testing)
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  run-pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-python
+
+      - name: install pre-commit
+        run: pip install pre-commit
+
+      - name: run pre-commit
+        run: pre-commit run --all-files --show-diff-on-failure
+
+  test-post-work-time-off:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-python
+
+      - id: unit-tests
+        run: uv run pytest tests
+
+      - name: Test post work time off
+        env:
+          SLACK_CHANNEL_ID: ${{ vars.PELOTECH_SLACK_CHANNEL_ID }}
+          SLACK_USER_ID: ${{ vars.PELOTECH_SLACK_USER_ID }}
+          SLACK_USER_TOKEN: ${{ secrets.PELOTECH_SLACK_USER_TOKEN }}
+          CURRENT_CLIENT: ${{ vars.PELOTECH_CURRENT_CLIENT }}
+        run: uv run worktimeoff $CURRENT_CLIENT -c $SLACK_CHANNEL_ID -u $SLACK_USER_ID -t $SLACK_USER_TOKEN

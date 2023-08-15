@@ -1,0 +1,23 @@
+name: Post to Slack Channel
+on:
+  workflow_dispatch:
+  schedule:
+    # Runs at 11 AM PST every Thursday
+    - cron: "0 19 * * 4"
+
+jobs:
+  post-work-time-off:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-python
+
+      - name: Post work time off
+        env:
+          SLACK_CHANNEL_ID: ${{ vars.PELOTECH_SLACK_CHANNEL_ID }}
+          SLACK_USER_ID: ${{ vars.PELOTECH_SLACK_USER_ID }}
+          SLACK_USER_TOKEN: ${{ secrets.PELOTECH_SLACK_USER_TOKEN }}
+          CURRENT_CLIENT: ${{ vars.PELOTECH_CURRENT_CLIENT }}
+        run: uv run worktimeoff $CURRENT_CLIENT -c $SLACK_CHANNEL_ID -u $SLACK_USER_ID -t $SLACK_USER_TOKEN
