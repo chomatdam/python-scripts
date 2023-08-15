@@ -1,0 +1,12 @@
+
+[project]
+name = "scripts"
+version = "0.0.1"
+authors = [
+    {name = "Damien Chomat", email = "damien.chomat@gmail.com"},
+]
+dependencies = [
+    "holidays"
+]
+requires-python = ">=3.11"
+license = {text = "MIT"}
