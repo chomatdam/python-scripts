@@ -1,14 +1,24 @@
 #!/usr/bin/env python3
 import calendar
 import datetime
-import subprocess
+import os
 import sys
 from dataclasses import dataclass
 
 import holidays
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
-KEYBASE_CHANNEL = 'chomatdam'
+slackClient = WebClient(token=os.environ['PELOTECH_SLACK_USER_TOKEN'])
+SLACK_USER_ID = 'U02AE3A63D2'
+SLACK_CHANNEL = 'C05P1M9FGUS'  # Channel #worktimeoff => C04AJ5KQW
+
+KEYBASE_BINARY = '/Applications/Keybase.app/Contents/SharedSupport/bin/keybase'
+KEYBASE_TEAM = 'pelotech'
+KEYBASE_CHANNEL = 'chomatdam'  # --channel "#worktimeoff" "pelotech"
+
 CURRENT_CLIENT = 'cinch'
+
 WEEK_LENGTH = 7
 FRIDAY_WEEK_INDEX = 4
 WORKDAYS_PER_WEEK = 5
@@ -91,13 +101,16 @@ def format_report(title, start_date, end_date):
     report = build_report(start_date, end_date)
     worked_hours = convert_worked_days_to_hours(report)
     lines = list()
-    lines.append("[ {} ]".format(title))
-    lines.append("💪 From {} to {}, I worked for a total of {} days ({} hours) at '{}'.".format(start_date,
-                                                                                               end_date,
-                                                                                               report.weekdays_count - len(
-                                                                                                   report.public_holidays),
-                                                                                               worked_hours,
-                                                                                               CURRENT_CLIENT.capitalize()))
+    lines.append("*{}*".format(title))
+    lines.append("From {} to {}, <@{}> worked for a total of {} days ({} hours) at _{}_.".format(
+        start_date.strftime('%m-%d'),
+        end_date.strftime('%m-%d'),
+        SLACK_USER_ID,
+        report.weekdays_count - len(report.public_holidays),
+        worked_hours,
+        CURRENT_CLIENT.capitalize())
+    )
+
     if len(report.public_holidays) > 0:
         names = "".join(["\n- {} ({})".format(off_day.name, off_day.datetime.strftime('%m/%d')) for off_day in
                          report.public_holidays])
@@ -110,14 +123,14 @@ def build_weekly_report(current_date):
     monday = current_date - datetime.timedelta(current_date.weekday())
     friday_diff = FRIDAY_WEEK_INDEX - current_date.weekday()
     friday = current_date + datetime.timedelta(friday_diff)
-    return format_report("Weekly Report", monday, friday)
+    return format_report("⏱️ Weekly Report", monday, friday)
 
 
 def build_monthly_report(current_date):
     start_date = datetime.date(current_date.year, current_date.month, 1)
     _, last_day_of_month = calendar.monthrange(current_date.year, current_date.month)
     end_date = datetime.date(current_date.year, current_date.month, last_day_of_month)
-    return format_report("Monthly Report", start_date, end_date)
+    return format_report("🗓️ Monthly Report", start_date, end_date)
 
 
 print("--- Script started at {}".format(datetime.datetime.now()))
@@ -136,9 +149,19 @@ if is_last_week:
 print("Messages to print:\n {}".format(messages))
 
 for message in messages:
-    args = ['zsh', '-c', "/Applications/Keybase.app/Contents/SharedSupport/bin/keybase chat send \"{}\" \"{}\"".format(KEYBASE_CHANNEL, message)]
-    process = subprocess.run(args, capture_output=True, text=True)
-    print(process.stdout)
+    # Slack
+    try:
+        response = slackClient.chat_postMessage(channel=SLACK_CHANNEL,
+                                                text=message,
+                                                mrkdwn=True)
+    except SlackApiError as error:
+        assert error.response["ok"] is False
+        assert error.response["error"]
+        print(f"Got an error: {error.response['error']}")
+    # Keybase
+    # args = ['zsh', '-c', "{} chat send \"{}\" \"{}\"".format(KEYBASE_BINARY, KEYBASE_CHANNEL, message)]
+    # process = subprocess.run(args, capture_output=True, text=True)
+    # print(process.stdout)
 
 print("--- Script finished successfully at {}".format(datetime.datetime.now()))
 sys.exit(0)
