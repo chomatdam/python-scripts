@@ -11,13 +11,10 @@ from slack_sdk.errors import SlackApiError
 
 slackClient = WebClient(token=os.environ['PELOTECH_SLACK_USER_TOKEN'])
 SLACK_USER_ID = 'U02AE3A63D2'
-SLACK_CHANNEL = 'C05P1M9FGUS'  # Channel #worktimeoff => C04AJ5KQW
+SLACK_CHANNEL = 'C05P1M9FGUS'  # Channel #automation
+# SLACK_CHANNEL = 'C05SD49T4G7'  # Channel #work-time-off
 
-KEYBASE_BINARY = '/Applications/Keybase.app/Contents/SharedSupport/bin/keybase'
-KEYBASE_TEAM = 'pelotech'
-KEYBASE_CHANNEL = 'chomatdam'  # --channel "#worktimeoff" "pelotech"
-
-CURRENT_CLIENT = 'cinch'
+CURRENT_CLIENT = 'TBD'
 
 WEEK_LENGTH = 7
 FRIDAY_WEEK_INDEX = 4
@@ -149,7 +146,6 @@ if is_last_week:
 print("Messages to print:\n {}".format(messages))
 
 for message in messages:
-    # Slack
     try:
         response = slackClient.chat_postMessage(channel=SLACK_CHANNEL,
                                                 text=message,
@@ -158,10 +154,6 @@ for message in messages:
         assert error.response["ok"] is False
         assert error.response["error"]
         print(f"Got an error: {error.response['error']}")
-    # Keybase
-    # args = ['zsh', '-c', "{} chat send \"{}\" \"{}\"".format(KEYBASE_BINARY, KEYBASE_CHANNEL, message)]
-    # process = subprocess.run(args, capture_output=True, text=True)
-    # print(process.stdout)
 
 print("--- Script finished successfully at {}".format(datetime.datetime.now()))
 sys.exit(0)

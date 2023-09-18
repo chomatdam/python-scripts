@@ -28,6 +28,18 @@ tail -f $PWD/logs/out.log # Application logs
 launchctl stop com.pelotech.worktimeoff
 launchctl unload ~/Library/LaunchAgents/$JOB_FILE
 ```
+### Environment variables
+
+#### Slack
+```sh
+# Temporary
+launchctl setenv PELOTECH_SLACK_USER_TOKEN $PELOTECH_SLACK_USER_TOKEN
+launchctl getenv PELOTECH_SLACK_USER_TOKEN
+# Permanent
+vi /etc/launchd.conf
+setenv PELOTECH_SLACK_USER_TOKEN $PELOTECH_SLACK_USER_TOKEN
+```
+
 
 ### Changing parameters
 
