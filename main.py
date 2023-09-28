@@ -11,10 +11,10 @@ from slack_sdk.errors import SlackApiError
 
 slackClient = WebClient(token=os.environ['PELOTECH_SLACK_USER_TOKEN'])
 SLACK_USER_ID = 'U02AE3A63D2'
-SLACK_CHANNEL = 'C05P1M9FGUS'  # Channel #automation
-# SLACK_CHANNEL = 'C05SD49T4G7'  # Channel #work-time-off
+# SLACK_CHANNEL = 'C05P1M9FGUS'  # Channel #automation
+SLACK_CHANNEL = 'C05SD49T4G7'  # Channel #ops-work-time-off
 
-CURRENT_CLIENT = 'TBD'
+CURRENT_CLIENT = 'UKI'
 
 WEEK_LENGTH = 7
 FRIDAY_WEEK_INDEX = 4
@@ -111,7 +111,7 @@ def format_report(title, start_date, end_date):
     if len(report.public_holidays) > 0:
         names = "".join(["\n- {} ({})".format(off_day.name, off_day.datetime.strftime('%m/%d')) for off_day in
                          report.public_holidays])
-        lines.append("🎉 FYI, we got days off:{}".format(names))
+        lines.append("🎉 FYI, we got day(s) off:{}".format(names))
 
     return "\n".join(lines)
 
