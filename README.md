@@ -1,5 +1,7 @@
 # Python Scripts
 
+Pdm is the package and dependency manager, `pdm install`.
+
 ## Weekly Report
 
 ### Initialization

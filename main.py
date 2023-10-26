@@ -31,7 +31,7 @@ class Holiday:
 @dataclass
 class MonthlyReport:
     weekdays_count: int = 0
-    public_holidays: list[Holiday] = list
+    # public_holidays: list[Holiday] = list
 
 
 def get_date_range(start_date, end_date):
@@ -55,15 +55,15 @@ def get_date_range(start_date, end_date):
     return dates
 
 
-def get_public_holidays(start_date, end_date):
-    date_range = get_date_range(start_date, end_date)
-    year_range = set(map(lambda date: date.year, date_range))
-    public_holidays = holidays.US(years=year_range).items()
-
-    selected_holidays = [Holiday(name=holiday[1], datetime=holiday[0]) for holiday in public_holidays if
-                         (holiday[0] >= start_date) & (holiday[0] <= end_date)]
-
-    return selected_holidays
+# def get_public_holidays(start_date, end_date):
+#     date_range = get_date_range(start_date, end_date)
+#     year_range = set(map(lambda date: date.year, date_range))
+#     public_holidays = holidays.US(years=year_range).items()
+#
+#     selected_holidays = [Holiday(name=holiday[1], datetime=holiday[0]) for holiday in public_holidays if
+#                          (holiday[0] >= start_date) & (holiday[0] <= end_date)]
+#
+#     return selected_holidays
 
 
 def count_days(start_date, end_date):
@@ -84,8 +84,8 @@ def build_report(start_date, end_date):
     weekdays_count = count_days(start_date, end_date)
     report.weekdays_count = weekdays_count
 
-    public_holidays = get_public_holidays(start_date, end_date)
-    report.public_holidays = public_holidays
+    # public_holidays = get_public_holidays(start_date, end_date)
+    # report.public_holidays = public_holidays
 
     return report
 
@@ -103,15 +103,15 @@ def format_report(title, start_date, end_date):
         start_date.strftime('%m-%d'),
         end_date.strftime('%m-%d'),
         SLACK_USER_ID,
-        report.weekdays_count - len(report.public_holidays),
+        report.weekdays_count,  # - len(report.public_holidays),
         worked_hours,
         CURRENT_CLIENT.capitalize())
     )
 
-    if len(report.public_holidays) > 0:
-        names = "".join(["\n- {} ({})".format(off_day.name, off_day.datetime.strftime('%m/%d')) for off_day in
-                         report.public_holidays])
-        lines.append("🎉 FYI, we got day(s) off:{}".format(names))
+    # if len(report.public_holidays) > 0:
+    #     names = "".join(["\n- {} ({})".format(off_day.name, off_day.datetime.strftime('%m/%d')) for off_day in
+    #                      report.public_holidays])
+    #     lines.append("🎉 FYI, we got day(s) off:{}".format(names))
 
     return "\n".join(lines)
 

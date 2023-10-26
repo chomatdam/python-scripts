@@ -25,11 +25,17 @@ version = "1.16.0"
 requires_python = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 summary = "Python 2 and 3 compatibility utilities"
 
+[[package]]
+name = "slack-sdk"
+version = "3.22.0"
+requires_python = ">=3.6.0"
+summary = "The Slack API Platform SDK for Python"
+
 [metadata]
 lock_version = "4.2"
 cross_platform = true
 groups = ["default"]
-content_hash = "sha256:20d856d71ae76869995ec12ef7c0afe29ead0de25c2276f2dbed040b66323e2b"
+content_hash = "sha256:e437645b8d185f761a1cc3b9d51df7dfa5888d00cfb7bd335771612008b2d103"
 
 [metadata.files]
 "holidays 0.28" = [
@@ -43,4 +49,8 @@ content_hash = "sha256:20d856d71ae76869995ec12ef7c0afe29ead0de25c2276f2dbed040b6
 "six 1.16.0" = [
     {url = "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
     {url = "https://files.pythonhosted.org/packages/d9/5a/e7c31adbe875f2abbb91bd84cf2dc52d792b5a01506781dbcf25c91daf11/six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
+]
+"slack-sdk 3.22.0" = [
+    {url = "https://files.pythonhosted.org/packages/0d/3b/1a9aefe8ce0f2b83d02059d3a69cc9fd9fb4f34a5629fdcebbc35456444c/slack_sdk-3.22.0.tar.gz", hash = "sha256:6eacce0fa4f8cfb4d84eac0d7d7e1b1926040a2df654ae86b94179bdf2bc4d8c"},
+    {url = "https://files.pythonhosted.org/packages/75/9d/67de8defc6aa0799893d048686b771de0b7f077e568a2cc5186b49b75cea/slack_sdk-3.22.0-py2.py3-none-any.whl", hash = "sha256:f102a4902115dff3b97c3e8883ad4e22d54732221886fc5ef29bfc290f063b4a"},
 ]
