@@ -9,12 +9,12 @@ from dataclasses import dataclass
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-slackClient = WebClient(token=os.environ['PELOTECH_SLACK_USER_TOKEN'])
-SLACK_USER_ID = 'U02AE3A63D2'
-SLACK_CHANNEL = 'C05P1M9FGUS'  # Channel #automation
-# SLACK_CHANNEL = 'C05SD49T4G7'  # Channel #ops-work-time-off
+slackClient = WebClient(token=os.environ["PELOTECH_SLACK_USER_TOKEN"])
+SLACK_USER_ID = "U02AE3A63D2"
+SLACK_CHANNEL = "C05SD49T4G7"  # Channel #ops-work-time-off
+# SLACK_CHANNEL = "C05P1M9FGUS"  # Channel #automation
 
-CURRENT_CLIENT = 'UKI'
+CURRENT_CLIENT = "UKI"
 
 WEEK_LENGTH = 7
 FRIDAY_WEEK_INDEX = 4
@@ -100,13 +100,15 @@ def format_report(title, start_date, end_date):
     worked_hours = convert_worked_days_to_hours(report)
     lines = list()
     lines.append("*{}*".format(title))
-    lines.append("From {} to {}, <@{}> worked for a total of {} days ({} hours) at _{}_.".format(
-        start_date.strftime('%m-%d'),
-        end_date.strftime('%m-%d'),
-        SLACK_USER_ID,
-        report.weekdays_count,  # - len(report.public_holidays),
-        worked_hours,
-        CURRENT_CLIENT.capitalize())
+    lines.append(
+        "From {} to {}, <@{}> worked for a total of {} days ({} hours) at _{}_.".format(
+            start_date.strftime("%m-%d"),
+            end_date.strftime("%m-%d"),
+            SLACK_USER_ID,
+            report.weekdays_count,  # - len(report.public_holidays),
+            worked_hours,
+            CURRENT_CLIENT.capitalize(),
+        )
     )
 
     # if len(report.public_holidays) > 0:
@@ -139,7 +141,9 @@ messages = list()
 weekly_message = build_weekly_report(today)
 messages.append(weekly_message)
 
-is_last_week = today.day > (calendar.monthrange(today.year, today.month)[1] - WEEK_LENGTH)
+is_last_week = today.day > (
+    calendar.monthrange(today.year, today.month)[1] - WEEK_LENGTH
+)
 if is_last_week:
     monthly_message = build_monthly_report(today)
     messages.append(monthly_message)
@@ -148,9 +152,9 @@ print("Messages to print:\n {}".format(messages))
 
 for message in messages:
     try:
-        response = slackClient.chat_postMessage(channel=SLACK_CHANNEL,
-                                                text=message,
-                                                mrkdwn=True)
+        response = slackClient.chat_postMessage(
+            channel=SLACK_CHANNEL, text=message, mrkdwn=True
+        )
     except SlackApiError as error:
         assert error.response["ok"] is False
         assert error.response["error"]
