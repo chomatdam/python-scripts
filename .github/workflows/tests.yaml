@@ -1,9 +1,9 @@
-name: Post work time off to 'ops-work-time-off' public channel
+name: Post work time off to 'automation' private channel
 on:
   workflow_dispatch:
-  schedule:
-    # Runs at 11 AM PST every Thursday
-    - cron: '0 19 * * 4'
+  push:
+    branches:
+      - '*'
 
 jobs:
   post-work-time-off:
@@ -13,10 +13,10 @@ jobs:
 
       - uses: ./.github/actions/setup-python
 
-      - name: Post work time off for Damien
+      - name: Test post work time off for Damien
         env:
           PELOTECH_SLACK_USER_TOKEN: ${{ secrets.PELOTECH_SLACK_USER_TOKEN }}
           SLACK_USER_ID: "U02AE3A63D2"
           CURRENT_CLIENT: "UKI"
-          SLACK_CHANNEL_ID: "C05SD49T4G7"
+          SLACK_CHANNEL_ID: "C05P1M9FGUS"
         run: poetry run python work-time-off/main.py $SLACK_CHANNEL_ID $SLACK_USER_ID $CURRENT_CLIENT

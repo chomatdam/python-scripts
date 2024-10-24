@@ -10,11 +10,6 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 slackClient = WebClient(token=os.environ["PELOTECH_SLACK_USER_TOKEN"])
-SLACK_USER_ID = "U02AE3A63D2"
-SLACK_CHANNEL = "C05SD49T4G7"  # Channel #ops-work-time-off
-# SLACK_CHANNEL = "C05P1M9FGUS"  # Channel #automation
-
-CURRENT_CLIENT = "UKI"
 
 WEEK_LENGTH = 7
 FRIDAY_WEEK_INDEX = 4
@@ -95,7 +90,7 @@ def convert_worked_days_to_hours(report):
     # return (report.weekdays_count - len(report.public_holidays)) * WORKHOURS_PER_DAY
 
 
-def format_report(title, start_date, end_date):
+def format_report(title, slack_user_id, client_name, start_date, end_date):
     report = build_report(start_date, end_date)
     worked_hours = convert_worked_days_to_hours(report)
     lines = list()
@@ -104,10 +99,10 @@ def format_report(title, start_date, end_date):
         "From {} to {}, <@{}> worked for a total of {} days ({} hours) at _{}_.".format(
             start_date.strftime("%m-%d"),
             end_date.strftime("%m-%d"),
-            SLACK_USER_ID,
+            slack_user_id,
             report.weekdays_count,  # - len(report.public_holidays),
             worked_hours,
-            CURRENT_CLIENT.capitalize(),
+            client_name.capitalize(),
         )
     )
 
@@ -119,14 +114,14 @@ def format_report(title, start_date, end_date):
     return "\n".join(lines)
 
 
-def build_weekly_report(current_date):
+def build_weekly_report(slack_user_id, client_name, current_date):
     monday = current_date - datetime.timedelta(current_date.weekday())
     friday_diff = FRIDAY_WEEK_INDEX - current_date.weekday()
     friday = current_date + datetime.timedelta(friday_diff)
-    return format_report("⏱️ Weekly Report", monday, friday)
+    return format_report("⏱️ Weekly Report", slack_user_id, client_name, monday, friday)
 
 
-def build_monthly_report(current_date):
+def build_monthly_report(slack_user_id, client_name, current_date):
     start_date = datetime.date(current_date.year, current_date.month, 1)
     _, last_day_of_month = calendar.monthrange(current_date.year, current_date.month)
     end_date = datetime.date(current_date.year, current_date.month, last_day_of_month)
@@ -135,17 +130,21 @@ def build_monthly_report(current_date):
 
 print("--- Script started at {}".format(datetime.datetime.now()))
 
+slack_channel = sys.argv[1]
+slack_user_id = sys.argv[2]
+current_client = sys.argv[3]
+
 today = datetime.date.today()
 messages = list()
 
-weekly_message = build_weekly_report(today)
+weekly_message = build_weekly_report(slack_user_id, current_client, today)
 messages.append(weekly_message)
 
 is_last_week = today.day > (
     calendar.monthrange(today.year, today.month)[1] - WEEK_LENGTH
 )
 if is_last_week:
-    monthly_message = build_monthly_report(today)
+    monthly_message = build_monthly_report(slack_user_id, current_client, today)
     messages.append(monthly_message)
 
 print("Messages to print:\n {}".format(messages))
@@ -153,7 +152,7 @@ print("Messages to print:\n {}".format(messages))
 for message in messages:
     try:
         response = slackClient.chat_postMessage(
-            channel=SLACK_CHANNEL, text=message, mrkdwn=True
+            channel=slack_channel, text=message, mrkdwn=True
         )
     except SlackApiError as error:
         assert error.response["ok"] is False
