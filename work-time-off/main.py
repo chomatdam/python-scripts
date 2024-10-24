@@ -5,14 +5,14 @@ import os
 import sys
 from dataclasses import dataclass
 
-import holidays
+# import holidays
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 slackClient = WebClient(token=os.environ['PELOTECH_SLACK_USER_TOKEN'])
 SLACK_USER_ID = 'U02AE3A63D2'
-# SLACK_CHANNEL = 'C05P1M9FGUS'  # Channel #automation
-SLACK_CHANNEL = 'C05SD49T4G7'  # Channel #ops-work-time-off
+SLACK_CHANNEL = 'C05P1M9FGUS'  # Channel #automation
+# SLACK_CHANNEL = 'C05SD49T4G7'  # Channel #ops-work-time-off
 
 CURRENT_CLIENT = 'UKI'
 
@@ -91,7 +91,8 @@ def build_report(start_date, end_date):
 
 
 def convert_worked_days_to_hours(report):
-    return (report.weekdays_count - len(report.public_holidays)) * WORKHOURS_PER_DAY
+    return report.weekdays_count * WORKHOURS_PER_DAY
+    # return (report.weekdays_count - len(report.public_holidays)) * WORKHOURS_PER_DAY
 
 
 def format_report(title, start_date, end_date):
