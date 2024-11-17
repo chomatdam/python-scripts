@@ -1,8 +1,17 @@
 name: "Setup Python project"
 
+inputs:
+  work-dir:
+    description: "Path to Python Package"
+    required: false
+    default: "."
+
 runs:
   using: "composite"
   steps:
+    - shell: bash
+      run: cd ${{ inputs.work-dir }}
+
     - name: Install uv
       uses: astral-sh/setup-uv@v3
       with:

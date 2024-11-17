@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   schedule:
     # Runs at 11 AM West Coast time every Thursday
-    - cron: "0 17,18 * * 4"
+    - cron: "0 16,17,18 * * 4"
 
 jobs:
   check-run:
@@ -20,11 +20,12 @@ jobs:
           echo "Trigger: ${TRIGGER}"
           if [[ ${TRIGGER} == 'schedule' ]]; then
             echo "Checking daylight saving time"
-            if [ $(TZ='America/Los_Angeles' date +%H) -eq '11' ]; then
+            CURRENT_TIME=$(TZ='America/Los_Angeles' date +%H)
+            if [ $CURRENT_TIME -eq '11' ]; then
               echo 'Time to run!'
               echo "run=true" >> "$GITHUB_OUTPUT"
             else
-              echo "It's not 11:00 local time in America/Los_Angeles. Waiting for next execution..."
+              echo "It's not 11:00 local time in America/Los_Angeles but $CURRENT_TIME. Waiting for next execution..."
               echo "run=false" >> "$GITHUB_OUTPUT"
             fi
           else
@@ -37,6 +38,8 @@ jobs:
     needs: check-run
     if: ${{ needs.check-run.outputs.run == 'true' }}
     environment: prod
+    env:
+      WORK_DIR: worktimeoff
     steps:
       - uses: actions/checkout@v4
 
@@ -48,4 +51,5 @@ jobs:
           SLACK_USER_ID: ${{ vars.PELOTECH_SLACK_USER_ID }}
           SLACK_USER_TOKEN: ${{ secrets.PELOTECH_SLACK_USER_TOKEN }}
           CURRENT_CLIENT: ${{ vars.PELOTECH_CURRENT_CLIENT }}
-        run: uv run worktimeoff $CURRENT_CLIENT -c $SLACK_CHANNEL_ID -u $SLACK_USER_ID -t $SLACK_USER_TOKEN
+        run: |
+          uv run generate_report $CURRENT_CLIENT -c $SLACK_CHANNEL_ID -u $SLACK_USER_ID -t $SLACK_USER_TOKEN
