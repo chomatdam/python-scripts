@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   schedule:
     # Runs at 11 AM West Coast time every Thursday
-    - cron: "0 16,17,18 * * 4"
+    - cron: "0 16,17,18,19 * * 4"
 
 jobs:
   check-run:
