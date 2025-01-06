@@ -6,6 +6,7 @@ requires-python = ">=3.13"
 dependencies = [
     "worktimeoff",
     "aws_cost_estimator",
+    "k8s_kube_ovn_ip_cleanup",
     "pyright>=1.1.389",
     "ruff>=0.7.1",
 ]
@@ -13,6 +14,7 @@ dependencies = [
 [tool.uv.sources]
 worktimeoff = { workspace = true }
 aws_cost_estimator = { workspace = true }
+k8s_kube_ovn_ip_cleanup = { workspace = true }
 
 [tool.uv.workspace]
 members = ["packages/*"]
