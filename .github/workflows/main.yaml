@@ -2,8 +2,8 @@ name: Post to Slack Channel
 on:
   workflow_dispatch:
   schedule:
-    # Runs at 11 AM West Coast time every Thursday
-    - cron: "0 16,17,18,19 * * 4"
+    # Runs daily at 11:30 AM Eastern Time
+    - cron: "30 16 * * 4"
 
 jobs:
   check-run:
