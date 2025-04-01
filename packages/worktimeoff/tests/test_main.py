@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 
 from worktimeoff import main
 import argparse
-import datetime
 
 CLIENT_NAME = "CLIENT_NAME"
 SLACK_CHANNEL = "SLACK_CHANNEL"
@@ -43,6 +42,4 @@ def test_main(mock_parse_args, mock_app_context, mock_evaluate_messages_to_repor
         slack_token=SLACK_TOKEN,
         company_client_name=CLIENT_NAME,
     )
-    mock_evaluate_messages_to_report.assert_called_once_with(
-        report_date=datetime.date.today(), ctx=mock_app_context()
-    )
+    mock_evaluate_messages_to_report.assert_called_once_with(ctx=mock_app_context())

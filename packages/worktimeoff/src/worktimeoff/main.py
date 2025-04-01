@@ -1,8 +1,8 @@
 import argparse
 import datetime
 
-from worktimeoff.report_generator import evaluate_messages_to_report
-from worktimeoff.app_context import AppContext
+from .report_generator import evaluate_messages_to_report
+from .app_context import AppContext
 
 
 def main():
@@ -20,8 +20,5 @@ def main():
         slack_token=args.slack_token,
         company_client_name=args.client_name,
     )
-    evaluate_messages_to_report(
-        report_date=datetime.date.today(),
-        ctx=app_context,
-    )
+    evaluate_messages_to_report(ctx=app_context)
     print("--- Script finished successfully at {}".format(datetime.datetime.now()))

@@ -7,8 +7,8 @@ dependencies = [
     "worktimeoff",
     "aws_cost_estimator",
     "k8s_kube_ovn_ip_cleanup",
-    "pyright>=1.1.389",
-    "ruff>=0.7.1",
+    "pyright>=1.1.398",
+    "ruff>=0.11.2",
 ]
 
 [tool.uv.sources]
@@ -28,10 +28,10 @@ build-backend = "hatchling.build"
 
 [tool.uv]
 dev-dependencies = [
-    "pyright>=1.1.389",
+    "pyright>=1.1.398",
     "pytest-mock>=3.14.0",
-    "pytest>=8.3.3",
-    "ruff>=0.7.1",
+    "pytest>=8.3.5",
+    "ruff>=0.11.2",
 ]
 
 [tool.pyright]
