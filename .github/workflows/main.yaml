@@ -3,40 +3,11 @@ on:
   workflow_dispatch:
   schedule:
     # Runs daily at 11:30 AM Eastern Time
-    - cron: "30 16 * * 4"
+    - cron: "30 16 * * *"
 
 jobs:
-  check-run:
-    runs-on: ubuntu-latest
-    outputs:
-      run: ${{ steps.check_local_time.outputs.run }}
-    steps:
-      - name: Check local time
-        id: check_local_time
-        env:
-          TRIGGER: ${{ github.event_name }}
-        run: |
-          # GitHub issue: https://github.com/orgs/community/discussions/13454
-          echo "Trigger: ${TRIGGER}"
-          if [[ ${TRIGGER} == 'schedule' ]]; then
-            echo "Checking daylight saving time"
-            CURRENT_TIME=$(TZ='America/Los_Angeles' date +%H)
-            if [ $CURRENT_TIME -eq '11' ]; then
-              echo 'Time to run!'
-              echo "run=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "It's not 11:00 local time in America/Los_Angeles but $CURRENT_TIME. Waiting for next execution..."
-              echo "run=false" >> "$GITHUB_OUTPUT"
-            fi
-          else
-            echo 'Trigger is not cron, omitting time check!'
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          fi
-
   post-work-time-off:
     runs-on: ubuntu-latest
-    needs: check-run
-    if: ${{ needs.check-run.outputs.run == 'true' }}
     environment: prod
     env:
       WORK_DIR: worktimeoff
